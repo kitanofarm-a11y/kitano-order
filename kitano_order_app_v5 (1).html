@@ -1,0 +1,470 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+:root{
+  --bg:#f5f2ed;--surface:#faf8f4;--card:#fff;--border:#ddd8cf;--border-light:#ede9e2;
+  --text:#1a1714;--text2:#5c5650;--text3:#9c9590;
+  --accent:#2d5a3d;--accent-l:#e8f0eb;--accent-m:#4a8c5f;
+  --warn:#c17f2a;--warn-l:#fef5e7;--danger:#c13a2a;
+  --r:10px;--rs:6px;--sh:0 1px 4px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.04);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Hiragino Kaku Gothic ProN','Hiragino Sans','Meiryo',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.6}
+header{background:var(--accent);color:#fff;padding:0 14px;height:50px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.h-title{font-size:14px;font-weight:600;letter-spacing:.04em}
+.h-sub{font-size:10px;opacity:.75;margin-top:1px}
+.h-badge{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:2px 10px;font-size:11px}
+nav{display:flex;background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+.ntab{flex:1;min-width:70px;padding:9px 4px;text-align:center;font-size:11px;font-weight:500;color:var(--text3);border:none;background:transparent;cursor:pointer;border-bottom:3px solid transparent;transition:all .18s;white-space:nowrap;font-family:inherit}
+.ntab.on{color:var(--accent);border-bottom-color:var(--accent)}
+.page{display:none;padding:14px;max-width:680px;margin:0 auto}
+.page.on{display:block}
+.card{background:var(--card);border-radius:var(--r);border:1px solid var(--border-light);padding:14px;margin-bottom:10px;box-shadow:var(--sh)}
+.ch{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.cs{width:20px;height:20px;border-radius:50%;background:var(--accent);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ct{font-size:13px;font-weight:600}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fi{display:flex;flex-direction:column;gap:3px}
+.fi.full{grid-column:1/-1}
+.fi label{font-size:11px;color:var(--text2);font-weight:500}
+.fi input,.fi select,.fi textarea{font-size:14px;padding:8px 10px;border-radius:var(--rs);border:1px solid var(--border);background:var(--surface);color:var(--text);width:100%;font-family:inherit;transition:border-color .15s}
+.fi input:focus,.fi select:focus,.fi textarea:focus{outline:none;border-color:var(--accent-m);box-shadow:0 0 0 3px rgba(45,90,61,.1)}
+.fi textarea{resize:vertical;min-height:50px}
+.hint{font-size:10px;color:var(--text3)}
+.sl{font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;margin-top:2px}
+hr.dv{border:none;border-top:1px solid var(--border-light);margin:12px 0}
+.dz{border:2px dashed var(--border);border-radius:var(--r);padding:24px 14px;text-align:center;cursor:pointer;transition:all .18s;background:var(--surface);position:relative}
+.dz:hover,.dz.over{border-color:var(--accent-m);background:var(--accent-l)}
+.dz input{position:absolute;inset:0;opacity:0;cursor:pointer}
+#prev-wrap{display:none;margin-top:10px;text-align:center}
+#prev-img{max-width:100%;max-height:200px;object-fit:contain;border-radius:var(--rs);border:1px solid var(--border)}
+.prev-name{font-size:11px;color:var(--text3);margin-top:5px}
+.ftabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.ftab{padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);background:transparent;font-size:12px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .15s;font-family:inherit}
+.ftab.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.status{display:none;align-items:center;gap:8px;background:var(--accent-l);border:1px solid #b8d4c0;border-radius:var(--rs);padding:9px 12px;font-size:12px;color:var(--accent);margin-bottom:10px}
+.status.on{display:flex}
+.spin{width:14px;height:14px;border:2px solid #b8d4c0;border-top-color:var(--accent);border-radius:50%;animation:sp .7s linear infinite;flex-shrink:0}
+@keyframes sp{to{transform:rotate(360deg)}}
+.btn{padding:9px 18px;border-radius:var(--rs);border:1.5px solid var(--border);background:var(--surface);font-size:13px;font-weight:600;color:var(--text);cursor:pointer;font-family:inherit;transition:all .15s}
+.btn:hover{background:var(--bg)}
+.btn:active{transform:scale(.97)}
+.btn.p{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn.p:hover{background:var(--accent-m);border-color:var(--accent-m)}
+.btn.p:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn.sm{padding:4px 10px;font-size:11px;font-weight:500}
+.br{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.cod-box{background:var(--warn-l);border:1px solid #f0d090;border-radius:var(--rs);padding:11px 12px;margin-top:10px}
+.cod-title{font-size:10px;font-weight:700;color:var(--warn);margin-bottom:8px}
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12px;min-width:380px}
+th{text-align:left;padding:6px 7px;font-size:10px;font-weight:600;color:var(--text2);border-bottom:1.5px solid var(--border);white-space:nowrap}
+td{padding:7px 7px;border-bottom:1px solid var(--border-light);vertical-align:middle;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+tr:last-child td{border-bottom:none}
+.empty{text-align:center;padding:1.5rem;font-size:12px;color:var(--text3)}
+.dl-box{display:none;background:var(--accent-l);border:1px solid #b8d4c0;border-radius:var(--r);padding:12px 14px;margin-top:10px}
+.dl-box.on{display:block}
+.dl-title{font-size:11px;font-weight:600;color:var(--accent);margin-bottom:8px}
+.dl-btns{display:flex;gap:8px;flex-wrap:wrap}
+.dlb{flex:1;min-width:140px;padding:11px 14px;border-radius:var(--rs);border:none;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;transition:all .15s;text-align:center}
+.dlb:active{transform:scale(.97)}
+.dlb.sg{background:#1a4480;color:#fff}
+.dlb.sg:hover{background:#143668}
+.dlb.yp{background:#cc0000;color:#fff}
+.dlb.yp:hover{background:#aa0000}
+.dlb.hide{display:none}
+.bc{display:inline-block;font-size:10px;padding:1px 7px;border-radius:20px;background:var(--warn-l);color:var(--warn);border:1px solid #f0d090;font-weight:600}
+.bn{display:inline-block;font-size:10px;padding:1px 7px;border-radius:20px;background:var(--bg);color:var(--text3);border:1px solid var(--border-light)}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--text);color:#fff;padding:8px 18px;border-radius:20px;font-size:12px;font-weight:500;z-index:9999;transition:transform .3s cubic-bezier(.34,1.56,.64,1),opacity .3s;opacity:0;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.25)}
+.toast.on{transform:translateX(-50%) translateY(0);opacity:1}
+@media(max-width:480px){.fg{grid-template-columns:1fr}.fi.full{grid-column:1}}
+</style>
+</head>
+<body>
+
+<header>
+  <div><div class="h-title">北野農園 伝票作成</div><div class="h-sub">注文書 → 佐川／ゆうプリR CSV</div></div>
+  <div class="h-badge" id="badge">0件</div>
+</header>
+
+<nav>
+  <button class="ntab on" onclick="showPage('scan')">📷 読み取り</button>
+  <button class="ntab" onclick="showPage('list')">📋 一覧・CSV</button>
+  <button class="ntab" onclick="showPage('cfg')">⚙️ 設定</button>
+</nav>
+
+<!-- SCAN -->
+<div class="page on" id="page-scan">
+  <div class="card">
+    <div class="ch"><div class="cs">1</div><div class="ct">注文書の写真をアップロード</div></div>
+    <div class="dz" id="dz">
+      <input type="file" id="fi" accept="image/*" onchange="onFile(this.files[0])">
+      <div style="font-size:28px;margin-bottom:6px">📋</div>
+      <div style="font-size:14px;font-weight:600">タップして写真を選択</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:3px">手書き・FAX・JPG・PNG対応</div>
+    </div>
+    <div id="prev-wrap"><img id="prev-img" alt="preview"><div class="prev-name" id="prev-name"></div></div>
+  </div>
+
+  <div class="card">
+    <div class="ch"><div class="cs">2</div><div class="ct">出力フォーマット → AI読み取り</div></div>
+    <div class="ftabs">
+      <button class="ftab on" id="t-sg" onclick="setTab('sg')">佐川 e飛伝３</button>
+      <button class="ftab" id="t-yp" onclick="setTab('yp')">ゆうプリR</button>
+      <button class="ftab" id="t-both" onclick="setTab('both')">両方</button>
+    </div>
+    <div class="status" id="status"><div class="spin"></div><span id="stxt">AI解析中…</span></div>
+    <button class="btn p" id="abtn" onclick="analyze()" disabled style="width:100%">AIで注文書を読み取る</button>
+  </div>
+
+  <div class="card" id="edit-card" style="display:none">
+    <div class="ch"><div class="cs">3</div><div class="ct">読み取り結果を確認・修正</div></div>
+    <div class="sl">お届け先情報</div>
+    <div class="fg">
+      <div class="fi full"><label>氏名</label><input id="f-name" placeholder="北野 由清"></div>
+      <div class="fi"><label>郵便番号（ハイフンなし）</label><input id="f-zip" placeholder="5970052" inputmode="numeric"></div>
+      <div class="fi"><label>電話番号（ハイフンなし）</label><input id="f-tel" placeholder="0724310000" inputmode="tel"></div>
+      <div class="fi full"><label>住所１</label><input id="f-a1" placeholder="大阪府貝塚市澤"></div>
+      <div class="fi full"><label>住所２（番地・建物名）</label><input id="f-a2" placeholder="1234"></div>
+      <div class="fi full"><label>品名１</label><input id="f-i1" placeholder="水なすぬか漬け×5"></div>
+      <div class="fi full"><label>品名２（佐川のみ・任意）</label><input id="f-i2" placeholder="丸漬×20 など"></div>
+      <div class="fi full"><label>品名（ゆうプリR 明細・任意）<span class="hint">※空欄なら品名１使用</span></label><input id="f-iyp" placeholder="水なすぬか漬け×5 丸漬×20"></div>
+      <div class="fi"><label>出荷個数</label><input type="number" id="f-qty" value="1" min="1" inputmode="numeric"></div>
+      <div class="fi"><label>クール便（佐川のみ）</label>
+        <select id="f-cool"><option value="">なし</option><option value="1">冷蔵</option><option value="2">冷凍</option></select>
+      </div>
+      <div class="fi"><label>配達希望日（YYYYMMDD）</label><input id="f-date" placeholder="20260401" inputmode="numeric"></div>
+      <div class="fi"><label>希望時間帯</label>
+        <select id="f-time">
+          <option value="">指定なし</option>
+          <option value="AM_51">午前中</option>
+          <option value="PM_61">12〜14時</option>
+          <option value="14_62">14〜16時</option>
+          <option value="16_63">16〜18時</option>
+          <option value="18_65">18〜20時</option>
+          <option value="19_65">19〜21時</option>
+        </select>
+      </div>
+      <div class="fi full"><label>備考</label><textarea id="f-note"></textarea></div>
+    </div>
+    <div class="cod-box">
+      <div class="cod-title">💴 代引き（必要な場合のみ手入力）</div>
+      <div class="fg">
+        <div class="fi"><label>代引き金額（円）</label><input type="number" id="f-cod" placeholder="空欄＝なし" min="0" inputmode="numeric"></div>
+        <div class="fi"><label>消費税額（円）</label><input type="number" id="f-ctax" placeholder="空欄＝0" min="0" inputmode="numeric"></div>
+      </div>
+    </div>
+    <div class="br">
+      <button class="btn p" onclick="addRecord()" style="flex:2">リストに追加</button>
+      <button class="btn" onclick="clearEdit()" style="flex:1">クリア</button>
+    </div>
+  </div>
+</div>
+
+<!-- LIST -->
+<div class="page" id="page-list">
+  <div class="card">
+    <div class="ch"><div class="cs">✓</div><div class="ct">登録済み注文一覧</div></div>
+    <div class="empty" id="empty">まだ注文が登録されていません</div>
+    <div class="tbl-wrap" id="twrap" style="display:none">
+      <table>
+        <thead><tr><th>#</th><th>氏名</th><th>住所</th><th>品名</th><th>個数</th><th>代引き</th><th></th></tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+    <div class="dl-box" id="dlbox">
+      <div class="dl-title">CSVダウンロード</div>
+      <div class="dl-btns">
+        <button class="dlb sg hide" id="dl-sg" onclick="dlCSV('sg')">佐川 e飛伝３<br><span style="font-size:10px;opacity:.8">sagawa_eHiden3.csv</span></button>
+        <button class="dlb yp hide" id="dl-yp" onclick="dlCSV('yp')">ゆうプリR<br><span style="font-size:10px;opacity:.8">yuuprint_R.csv</span></button>
+      </div>
+    </div>
+    <div id="clr-row" style="display:none;margin-top:8px">
+      <button class="btn sm" onclick="clearAll()" style="margin-left:auto;display:block;color:var(--danger)">すべてクリア</button>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS -->
+<div class="page" id="page-cfg">
+  <div class="card">
+    <div class="ch"><div class="cs">⚙</div><div class="ct">発送元設定</div></div>
+    <div class="fg">
+      <div class="fi full"><label>依頼主 名称</label><input id="s-name" value="北野　忠清"></div>
+      <div class="fi"><label>電話番号（ハイフンなし）</label><input id="s-tel" value="09096132422" inputmode="tel"></div>
+      <div class="fi"><label>郵便番号（ハイフンなし）</label><input id="s-zip" value="5970083" inputmode="numeric"></div>
+      <div class="fi full"><label>住所</label><input id="s-addr" value="大阪府貝塚市海塚47-1"></div>
+    </div>
+    <div class="br"><button class="btn p sm" onclick="saveCfg()">設定を保存</button></div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="cs">i</div><div class="ct">使い方</div></div>
+    <div style="font-size:12px;color:var(--text2);line-height:1.9">
+      <p>① 読み取りタブで注文書写真をアップロード</p>
+      <p>② フォーマット選択 →「AIで読み取る」</p>
+      <p>③ 内容を確認・修正して「リストに追加」</p>
+      <p>④ 複数注文を続けて登録できます</p>
+      <p>⑤ 一覧・CSVタブでCSVをダウンロード</p>
+      <p style="margin-top:8px;font-size:10px;color:var(--text3)">佐川e飛伝３：74列 / ゆうプリR：120列<br>列順・列名は実CSVフォーマットに完全準拠</p>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let tab='sg', imgB64=null, imgType='image/jpeg', records=[];
+
+// 設定読み込み
+(function(){
+  try{
+    const s=JSON.parse(localStorage.getItem('kn_cfg')||'{}');
+    if(s.name) document.getElementById('s-name').value=s.name;
+    if(s.tel)  document.getElementById('s-tel').value=s.tel;
+    if(s.zip)  document.getElementById('s-zip').value=s.zip;
+    if(s.addr) document.getElementById('s-addr').value=s.addr;
+  }catch(e){}
+})();
+
+function saveCfg(){
+  try{
+    localStorage.setItem('kn_cfg',JSON.stringify({
+      name:document.getElementById('s-name').value,
+      tel:document.getElementById('s-tel').value,
+      zip:document.getElementById('s-zip').value,
+      addr:document.getElementById('s-addr').value,
+    }));
+  }catch(e){}
+  toast('設定を保存しました');
+}
+
+function getSender(){
+  return {
+    name:document.getElementById('s-name').value.trim(),
+    tel:document.getElementById('s-tel').value.trim().replace(/-/g,''),
+    zip:document.getElementById('s-zip').value.trim().replace(/-/g,''),
+    addr:document.getElementById('s-addr').value.trim(),
+  };
+}
+
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('on'));
+  document.getElementById('page-'+id).classList.add('on');
+  const idx=['scan','list','cfg'].indexOf(id);
+  document.querySelectorAll('.ntab')[idx].classList.add('on');
+}
+
+// ファイル読込（自動圧縮）
+const dz=document.getElementById('dz');
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('over')});
+dz.addEventListener('dragleave',()=>dz.classList.remove('over'));
+dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('over');const f=e.dataTransfer.files[0];if(f)onFile(f)});
+
+function onFile(f){
+  if(!f)return;
+  imgType='image/jpeg';
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const img=new Image();
+    img.onload=()=>{
+      const MAX=1600;
+      let w=img.width,h=img.height;
+      if(w>MAX||h>MAX){
+        if(w>h){h=Math.round(h*MAX/w);w=MAX;}
+        else{w=Math.round(w*MAX/h);h=MAX;}
+      }
+      const canvas=document.createElement('canvas');
+      canvas.width=w;canvas.height=h;
+      canvas.getContext('2d').drawImage(img,0,0,w,h);
+      const d=canvas.toDataURL('image/jpeg',0.82);
+      imgB64=d.split(',')[1];
+      const kb=Math.round(imgB64.length*0.75/1024);
+      document.getElementById('prev-wrap').style.display='block';
+      document.getElementById('prev-img').src=d;
+      document.getElementById('prev-name').textContent=f.name+' '+w+'×'+h+'px / 約'+kb+'KB';
+      document.getElementById('abtn').disabled=false;
+    };
+    img.src=e.target.result;
+  };
+  reader.readAsDataURL(f);
+}
+
+function setTab(t){
+  tab=t;
+  ['sg','yp','both'].forEach(x=>document.getElementById('t-'+x).classList.toggle('on',x===t));
+  if(records.length)renderTable();
+}
+
+async function analyze(){
+  if(!imgB64)return;
+  const sb=document.getElementById('status');
+  sb.classList.add('on');
+  document.getElementById('stxt').textContent='AIが注文書を解析中…';
+  document.getElementById('abtn').disabled=true;
+  document.getElementById('edit-card').style.display='none';
+
+  const prompt=`この注文書の画像から配送に必要な情報を抽出してください。必ず以下のJSON形式のみで返してください。説明文や\`\`\`は不要です。
+{
+  "name": "お届け先氏名（姓と名の間は全角スペース）",
+  "zip": "郵便番号ハイフンなし7桁",
+  "addr1": "住所（都道府県〜番地）",
+  "addr2": "建物名・部屋番号（なければ空文字）",
+  "tel": "電話番号ハイフンなし",
+  "item1": "品名１",
+  "item2": "品名２（なければ空文字）",
+  "qty": 1,
+  "date": "配達希望日YYYYMMDD（なければ空文字）",
+  "time": "時間帯コード（午前中→AM_51 / 12〜14時→PM_61 / 14〜16時→14_62 / 16〜18時→16_63 / 18〜20時→18_65 / 19〜21時→19_65 / 不明→空文字）",
+  "note": "備考（なければ空文字）"
+}`;
+
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens:1000,
+        messages:[{role:'user',content:[
+          {type:'image',source:{type:'base64',media_type:imgType,data:imgB64}},
+          {type:'text',text:prompt}
+        ]}]
+      })
+    });
+    const data=await res.json();
+    if(data.error){
+      document.getElementById('stxt').textContent='エラー: '+data.error.message;
+      document.getElementById('abtn').disabled=false;
+      return;
+    }
+    const txt=data.content.filter(c=>c.type==='text').map(c=>c.text).join('');
+    const m=txt.match(/\{[\s\S]*\}/);
+    if(!m){
+      document.getElementById('stxt').textContent='解析失敗: '+txt.substring(0,150);
+      document.getElementById('abtn').disabled=false;
+      return;
+    }
+    fillForm(JSON.parse(m[0]));
+    sb.classList.remove('on');
+    document.getElementById('edit-card').style.display='block';
+    document.getElementById('edit-card').scrollIntoView({behavior:'smooth',block:'start'});
+  }catch(e){
+    document.getElementById('stxt').textContent='失敗: '+e.message;
+    document.getElementById('abtn').disabled=false;
+  }
+}
+
+function fillForm(d){
+  document.getElementById('f-name').value=d.name||'';
+  document.getElementById('f-zip').value=d.zip||'';
+  document.getElementById('f-a1').value=d.addr1||'';
+  document.getElementById('f-a2').value=d.addr2||'';
+  document.getElementById('f-tel').value=d.tel||'';
+  document.getElementById('f-i1').value=d.item1||'';
+  document.getElementById('f-i2').value=d.item2||'';
+  document.getElementById('f-iyp').value=d.item1?(d.item2?d.item1+' '+d.item2:d.item1):'';
+  document.getElementById('f-qty').value=d.qty||1;
+  document.getElementById('f-date').value=d.date||'';
+  document.getElementById('f-time').value=d.time||'';
+  document.getElementById('f-note').value=d.note||'';
+  document.getElementById('f-cod').value='';
+  document.getElementById('f-ctax').value='';
+  document.getElementById('f-cool').value='';
+}
+
+function clearEdit(){fillForm({});document.getElementById('f-qty').value=1;}
+
+function addRecord(){
+  const r={
+    name:document.getElementById('f-name').value.trim(),
+    zip:document.getElementById('f-zip').value.trim().replace(/-/g,''),
+    addr1:document.getElementById('f-a1').value.trim(),
+    addr2:document.getElementById('f-a2').value.trim(),
+    tel:document.getElementById('f-tel').value.trim().replace(/-/g,''),
+    item1:document.getElementById('f-i1').value.trim(),
+    item2:document.getElementById('f-i2').value.trim(),
+    itemYp:document.getElementById('f-iyp').value.trim(),
+    qty:document.getElementById('f-qty').value||1,
+    cool:document.getElementById('f-cool').value,
+    date:document.getElementById('f-date').value||'',
+    time:document.getElementById('f-time').value||'',
+    note:document.getElementById('f-note').value.trim(),
+    cod:document.getElementById('f-cod').value||'',
+    codTax:document.getElementById('f-ctax').value||'',
+    sender:getSender(),
+  };
+  if(!r.name&&!r.addr1){toast('氏名または住所を入力してください');return;}
+  records.push(r);
+  renderTable();
+  clearEdit();
+  document.getElementById('edit-card').style.display='none';
+  document.getElementById('abtn').disabled=!imgB64;
+  document.getElementById('badge').textContent=records.length+'件';
+  toast('追加しました（計'+records.length+'件）');
+  showPage('list');
+}
+
+function delRecord(i){records.splice(i,1);renderTable();document.getElementById('badge').textContent=records.length+'件';}
+function clearAll(){if(!confirm(records.length+'件をすべて削除しますか？'))return;records=[];renderTable();document.getElementById('badge').textContent='0件';toast('クリアしました');}
+
+function renderTable(){
+  const em=document.getElementById('empty');
+  const tw=document.getElementById('twrap');
+  const dl=document.getElementById('dlbox');
+  const cr=document.getElementById('clr-row');
+  if(!records.length){em.style.display='block';tw.style.display='none';dl.classList.remove('on');cr.style.display='none';return;}
+  em.style.display='none';tw.style.display='block';dl.classList.add('on');cr.style.display='block';
+  document.getElementById('tbody').innerHTML=records.map((r,i)=>`<tr>
+    <td style="font-weight:600">${i+1}</td>
+    <td style="font-weight:500">${r.name}</td>
+    <td style="font-size:11px;color:var(--text3)">${r.addr1}${r.addr2}</td>
+    <td>${r.item1}</td><td>${r.qty}</td>
+    <td>${r.cod?'<span class="bc">¥'+Number(r.cod).toLocaleString()+'</span>':'<span class="bn">なし</span>'}</td>
+    <td><button class="btn sm" onclick="delRecord(${i})">削除</button></td>
+  </tr>`).join('');
+  document.getElementById('dl-sg').classList.toggle('hide',!(tab==='sg'||tab==='both'));
+  document.getElementById('dl-yp').classList.toggle('hide',!(tab==='yp'||tab==='both'));
+}
+
+function esc(v){const s=String(v??'');return(s.includes(',')||s.includes('"')||s.includes('\n'))?'"'+s.replace(/"/g,'""')+'"':s;}
+function sgTime(t){return{'AM_51':'1','PM_61':'3','14_62':'4','16_63':'5','18_65':'6','19_65':'7'}[t]||'';}
+function ypTime(t){return{'AM_51':'51','PM_61':'61','14_62':'62','16_63':'63','18_65':'65','19_65':'65'}[t]||'';}
+function today8(){const d=new Date();return d.getFullYear()+(''+(d.getMonth()+1)).padStart(2,'0')+(''+d.getDate()).padStart(2,'0');}
+
+function makeSagawa(){
+  const H=['お届け先コード取得区分','お届け先コード','お届け先電話番号','お届け先郵便番','お届け先住所１','お届け先住所２','お届け先住所３','お届け先名称１','お届け先名称２','お客様管理番号','お客様コード','部署ご担当者コード取得区分','部署ご担当者コード','部署ご担当者名称','荷送人電話番号','ご依頼主コード取得区分','ご依頼主コード','ご依頼主電話番号','ご依頼主郵便番号','ご依頼主住所１','ご依頼主住所２','ご依頼主名称１','ご依頼主名称２','荷姿','品名１','品名２','品名３','品名４','品名５','荷札荷姿','荷札品名１','荷札品名２','荷札品名３','荷札品名４','荷札品名５','荷札品名６','荷札品名７','荷札品名８','荷札品名９','荷札品名１０','荷札品名１１','出荷個数','スピード指定','クール便指定','配達日','配達指定時間帯','配達指定時間（時分）','代引金額','消費税','決済種別','保険金額','指定シール１','指定シール２','指定シール３','営業所受取','SRC区分','営業所受取営業所コード','元着区分','メールアドレス','ご不在時連絡先','出荷日','お問い合せ送り状No.','出荷場印字区分','集約解除指定','編集０１','編集０２','編集０３','編集０４','編集０５','編集０６','編集０７','編集０８','編集０９','編集１０'];
+  const rows=records.map(r=>{const c=new Array(74).fill('');c[2]=r.tel;c[3]=r.zip;c[4]=r.addr1;c[5]=r.addr2;c[7]=r.name;c[17]=r.sender.tel;c[18]=r.sender.zip;c[19]=r.sender.addr;c[21]=r.sender.name;c[24]=r.item1;c[25]=r.item2;c[41]=r.qty;c[43]=r.cool;c[44]=r.date;c[45]=sgTime(r.time);c[47]=r.cod;c[48]=r.codTax;return c.map(esc).join(',');});
+  return '\uFEFF'+[H.map(esc).join(','),...rows].join('\r\n');
+}
+
+function makeYuupri(){
+  const t=today8();
+  const H=['お客様側管理番号','お問い合わせ番号','代表お問い合わせ番号','発送予定日','発送予定時間区分','出荷期限日','到着期限日','郵便種別','保冷種別','元／着払／代引','書留／セキュリティ種別','配達時間帯指定郵便種別','送り状種別','お届け先 コード','お届け先 郵便番号','お届け先 住所1','お届け先 住所2','お届け先 住所3','お届け先 名称1','お届け先 名称2','お届け先 敬称区分','お届け先 電話番号','お届け先 メールアドレス1','お届け先 局留め区分','お届け先 局留め郵便局名','お届け先 局留めメール使用区分','お届け先 局留め郵便番号','お届け先 配達予告メール使用区分','お届け先 再配達予告メール使用区分','ご依頼主 コード','ご依頼主 集荷先と同一区分','ご依頼主 郵便番号','ご依頼主 住所1','ご依頼主 住所2','ご依頼主 住所3','ご依頼主 名称1','ご依頼主 名称2','ご依頼主 敬称','ご依頼主 電話番号','ご依頼主 メールアドレス1','ご依頼主 荷送人指図区分','ご依頼主 お届け通知メール使用区分','ご依頼主 お届け通知はがき使用区分','集荷先 コード','集荷先 連携可否区分','集荷先 会社コード','集荷先 依頼先店所','集荷先 郵便番号','集荷先 住所1','集荷先 住所2','集荷先 住所3','集荷先 名称1','集荷先 名称2','集荷先 敬称','集荷先 電話番号','受注番号','こわれもの区分','なまもの区分','ビン類区分','逆さま厳禁区分','下積み厳禁区分','商品サイズ／厚さ区分','重量(ｇ)','25kg超重量物区分','損害要償額','速達・配達日指定種別','配達指定日／希望日','配達時間帯区分','差出方法区分','ゆうパック複数個割引','ゆうパック同一割引','セット商品コード','セット商品名ラベル印字区分','複数個口数','記事名１','記事名２','フリー項目０１','フリー項目０２','フリー項目０３','フリー項目０４','フリー項目０５','フリー項目０６','フリー項目０７','フリー項目０８','フリー項目０９','フリー項目１０','空港利用区分','空港・局／支店名','航空会社名','利用便名','レジャー区分','プレー・搭乗日','プレー・搭乗時間','クラブ本数','復路集貨日','出荷先登録名','集荷希望区分','集荷日付','集荷時間帯区分','支店連携先選択用名称','代引金額','代引消費税金額','送り状発行年月日','商品番号(明細)','品名(明細)','個数(明細)','重量(ｇ) (明細)','単価(明細)','金額(明細)','商品備考０１(明細)','商品備考０２(明細)','商品備考０３(明細)','商品備考０４(明細)','商品備考０５(明細)','商品備考０６(明細)','商品備考０７(明細)','商品備考０８(明細)','商品備考０９(明細)','商品備考１０(明細)','お客様指定配送種類'];
+  const rows=records.map(r=>{const c=new Array(120).fill('');c[3]=t;c[7]='0';c[8]='1';c[9]=r.cod?'2':'0';c[14]=r.zip;c[15]=r.addr1;c[16]=r.addr2;c[18]=r.name;c[21]=r.tel;c[31]=r.sender.zip;c[32]=r.sender.addr;c[35]=r.sender.name;c[38]=r.sender.tel;c[57]='1';c[65]=r.date?'2':'';c[66]=r.date;c[67]=ypTime(r.time);c[100]=r.cod;c[101]=r.codTax;c[104]=r.itemYp||r.item1+(r.item2?' '+r.item2:'');return c.map(esc).join(',');});
+  return '\uFEFF'+[H.map(esc).join(','),...rows].join('\r\n');
+}
+
+function dlCSV(type){
+  const csv=type==='sg'?makeSagawa():makeYuupri();
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+  a.download=type==='sg'?'sagawa_eHiden3.csv':'yuuprint_R.csv';
+  a.click();
+  toast((type==='sg'?'佐川 e飛伝３':'ゆうプリR')+' CSVをダウンロードしました');
+}
+
+let toastT;
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.classList.add('on');
+  clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('on'),2500);
+}
+</script>
+</body>
+</html>
